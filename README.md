@@ -31,10 +31,11 @@ Feel free to structure the code however you prefer and use third-party libraries
 ## Frontend
 ### Requirements
 - Create a web application which will
- - Using a framework such as Angular is preferred, but not required
  - Display a list of the devices retrieved from the JSON API, visualizing the three properties
  - Add a search box which will filter devices by a search value
  - Add a button for each device list entry which will toggle the `shipped` state of that device
+
+Using a framework such as Angular is preferred, but not required.
 
 Not need to spend too much time on making it beautiful. Basic aesthetics are welcome, but we are not grading your design skills here.
 
