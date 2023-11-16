@@ -31,9 +31,9 @@ Feel free to structure the code however you prefer and use third-party libraries
 ## Frontend
 ### Requirements
 - Create a web application which will
- - Display a list of the devices retrieved from the JSON API, visualizing the three properties
- - Add a search box which will filter devices by a search value
- - Add a button for each device list entry which will toggle the `shipped` state of that device
+  - Display a list of the devices retrieved from the JSON API, visualizing the three properties
+  - Add a search box which will filter devices by a search value
+  - Add a button for each device list entry which will toggle the `shipped` state of that device
 
 Using a framework such as Angular is preferred, but not required.
 
