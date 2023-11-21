@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Interaction</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container mt-4">
+    <!-- Search Box -->
+    <div class="mb-4">
+      <h2>Search API</h2>
+      <form id="searchForm">
+        <div class="form-group">
+          <label for="searchInput">Search:</label>
+          <input type="text" class="form-control" id="searchInput" placeholder="Enter search query">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="searchAPI()">Search UUID</button>
+      </form>
+      <div id="searchResults" class="mt-3"></div>
+      <div id="apiResponse" class="mt-3"></div>
+    </div>
+
+    <div>
+      <h2>Add data</h2>
+      <form id="postForm">
+        <div class="form-group">
+          <label for="uuid">UUID:</label>
+          <input type="text" class="form-control" id="uuid" name="uuid" placeholder="Enter UUID">
+        </div>
+        <div class="form-group">
+          <label for="serialNumber">Serial Number:</label>
+          <input type="text" class="form-control" id="serialNumber" name="serialNumber" placeholder="Enter Serial Number">
+        </div>
+        <div class="form-group">
+          <label for="shipped">Shipped:</label>
+          <select class="form-control" id="shipped" name="shipped">
+            <option value="1">True</option>
+            <option value="0">False</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-success" onclick="submitForm()">Submit</button>
+      </form>
+      <div id="postResponse"></div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <script>
+    var apiUrl = 'http://localhost/device';
+
+    function searchAPI() {
+      
+        var searchInput = $('#searchInput').val();
+        var data = null;
+        if (searchInput) {
+            data = {
+                search: searchInput
+            }
+        }
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            dataType: 'json',
+            data: data,
+            success: function(data) {
+                displayData(data);
+            },
+            error: function(error) {
+                $('#searchResults').html('<p>Error fetching data from the API</p>');
+            }
+        });
+
+        $('#searchResults').html(`<p>Results for: ${searchInput}</p>`);
+    }
+
+    function displayData(data) {
+        var apiResponseDiv = $('#apiResponse');
+        apiResponseDiv.empty();
+        data.forEach(function(item) {
+            var postHtml = `<div>
+                                <h3>${item.uuid}</h3>
+                                <p>Serial #: ${item.serialNumber}</p>
+                                <p onclick="toggleShipped(this, '${item.uuid}')">Shipped status: <span>${item.shipped}</span>. Tap to change.</p>
+                            </div>`;
+            apiResponseDiv.append(postHtml);
+        });
+    }
+
+    function submitForm() {
+        var formData = {
+            uuid: $('#uuid').val(),
+            serialNumber: $('#serialNumber').val(),
+            shipped: $('#shipped').val()
+        };
+
+        $.ajax({
+            url: apiUrl,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(data) {
+                $('#postResponse').html('<p>Request successful!</p>');
+                searchApi();
+            },
+            error: function(error) {
+                $('#postResponse').html('<p>Error sending request</p>');
+            }
+        });
+    }
+
+    function toggleShipped(obj, uuid) {
+    
+        $.ajax({
+            url: apiUrl + '/' + uuid,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: null,
+            success: function(data) {
+                $(obj).html('Shipped status: <span>' + data['shipped'] + '</span>. Tap to change.');
+            },
+            error: function(error) {
+                $(obj).html('<p>Error sending request</p>');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#searchInput').val('');
+        searchAPI();
+    })
+
+  </script>
+
+</body>
+</html>
